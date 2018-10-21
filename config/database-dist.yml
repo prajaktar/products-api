@@ -1,0 +1,39 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+
+development:
+  <<: *default
+  database: local_db_name
+  username: local_username
+  password: local_password
+  host: local.db.com
+  port: 3306
+
+staging:
+  <<: *default
+  database: stage_db_name
+  username: stage_username
+  password: stage_password
+
+testing:  
+  <<: *default
+  database: test_db_name
+  username: test_username
+  password: test_password  
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  database: test_db_name
+  username: test_username
+  password: test_password
+
+production: 
+  <<: *default
+  database: prod_db_name
+  username: prod_username
+  password: prod_password
