@@ -1,7 +1,8 @@
 class Api::V1::ProductsController < Api::V1::BaseController
+  before_action :intialize_category
 
   def index
-    products = Product.all
+    products = @category.products.all
     render_with_options(
       json: products,
       status: :ok,
@@ -10,7 +11,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
   end
 
   def show
-    products = Product.find(params.require(:id))
+    products = @category.products.find(params.require(:id))
     render_with_options(
       json: products,
       status: :ok,
@@ -19,7 +20,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
   end
 
   def update
-    product = Product.find(params.require(:id))
+    product = @category.products.find(params.require(:id))
     response = product.update(product_params)
     render_with_options(
       json: response,
@@ -29,8 +30,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
   end
 
   def create
-    category = Category.find(params.require(:category_id))
-    response = Product.insert(product_params, category)
+    response = Product.insert(product_params, @category)
     render_with_options(
       json: response,
       status: :ok,
@@ -39,8 +39,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
   end
 
   def download
-    category = Category.find(params.require(:category_id))
-    filename = Product.report(category)
+    filename = Product.report(@category)
     if File.exist?(filename)
       send_file("#{filename}", filename: "#{filename}", type: CSV_CONTENT_TYPE, stream: false)
     else
@@ -55,6 +54,10 @@ class Api::V1::ProductsController < Api::V1::BaseController
 
   def product_params
     params.permit([:name, :price, :quantity])
+  end
+
+  def intialize_category
+    @category = Category.find(params.require(:category_id))
   end
 
 end

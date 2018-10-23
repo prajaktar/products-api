@@ -13,15 +13,16 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
   describe '#index' do
     context 'when product is present' do
+      let(:payload) { { category_id: category.id } }
       it 'responds with status ok' do
-        get :index
+        get :index, payload
         expect(response).to have_http_status(200)
       end
     end
   end
 
   describe '#show' do
-    let(:payload) { {id: product.id}}
+    let(:payload) { { id: product.id, category_id: category.id } }
     context 'when product is present' do
       it 'responds with status ok' do
         get :show, payload
@@ -39,7 +40,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
   end
 
   describe '#update' do
-    let(:payload) { { id: product.id, name: Faker::Lorem.word, price: Faker::Number.number(2), quantity: Faker::Number.number(2) } }
+    let(:payload) { { id: product.id, name: Faker::Lorem.word, price: Faker::Number.number(2),
+                       quantity: Faker::Number.number(2), category_id: category.id } }
     context 'when product is present' do
       it 'responds with status ok' do
         patch :update, payload
