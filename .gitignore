@@ -16,8 +16,5 @@
 !/log/.keep
 /tmp
 
-/config/secrets.yml
-/config/database.yml
-
 .built
 .bundled
