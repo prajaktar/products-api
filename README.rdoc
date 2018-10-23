@@ -1,16 +1,26 @@
-== README
+## Products API
 
-* Ruby version = 2.4.0
-
-* Mysql version = 5.6.0
-
-* Rspec
-
-* JWT Authentication
-
+### Auth
 Products and Categories api need JWT authentication, inprder to consume those API
 Login API - domain/api/v1/auth/login
 params = { email: 'abc@gmail.com', password: 'password' }
 On success this sets Authorization Header
 
 To access Products and Categories API set Authorization Header with Bearer "#{JWT_TOKEN}"
+
+### Docker like a boss
+
+To start developing you just need `Docker` installed and running. Then just:
+
+```shell
+$ make
+```
+And your server will show up in [http://localhost:3000](http://localhost:3000)
+
+#### Testing
+
+For testing just:
+
+```
+$ make test
+```
