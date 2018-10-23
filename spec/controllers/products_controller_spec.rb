@@ -40,8 +40,9 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
   end
 
   describe '#update' do
-    let(:payload) { { id: product.id, name: Faker::Lorem.word, price: Faker::Number.number(2),
-                       quantity: Faker::Number.number(2), category_id: category.id } }
+    let(:payload) { { product: { name: Faker::Lorem.word, price: Faker::Number.number(2),
+                       quantity: Faker::Number.number(2) }, id: product.id , category_id: category.id } }
+                       puts product
     context 'when product is present' do
       it 'responds with status ok' do
         patch :update, payload
@@ -59,7 +60,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
   end
 
   describe '#create' do
-    let(:payload) { { category_id: category.id, name: Faker::Lorem.word, price: Faker::Number.number(2), quantity: Faker::Number.number(2) } }
+    let(:payload) { { product: { name: Faker::Lorem.word, price: Faker::Number.number(2),
+                       quantity: Faker::Number.number(2) }, category_id: category.id } }
     context 'when product created' do
       it 'responds with status ok' do
         post :create, payload
