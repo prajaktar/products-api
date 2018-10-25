@@ -1,25 +1,26 @@
 class Api::V1::ProductsController < Api::V1::BaseController
-  before_action :intialize_product, except: :download
+  before_action :set_category
+  before_action :set_product, except: [:download, :index, :create]
 
   def index
-    render json: @product
+    render json: @category.products
   end
 
   def show
-    render json: @product.find(params.require(:id))
+    render json: @product
   end
 
   def update
-    product = @product.find(params.require(:id))
-    render json: product.update(product_params)
+    @product.update(product_params)
+    render json: @product
   end
 
   def create
-    render json: @product.create!(product_params)
+    render json: @category.products.create!(product_params)
   end
 
   def download
-    filename = Category.find(params.require(:category_id)).report
+    filename = @category.report
     if File.exist?(filename)
       send_file("#{filename}", filename: "#{filename}", type: CSV_CONTENT_TYPE, stream: false)
     else
@@ -33,7 +34,11 @@ class Api::V1::ProductsController < Api::V1::BaseController
     params.require(:product).permit(:name, :price, :quantity)
   end
 
-  def intialize_product
-    @product = Category.find(params.require(:category_id)).products
+  def set_category
+    @category = Category.find(params.require(:category_id))
+  end
+
+  def set_product
+    @product = @category.products.find(params.require(:id))
   end
 end

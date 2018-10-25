@@ -6,7 +6,6 @@ class Category < ApplicationRecord
   ## Generate a csv report of produucts based on category
 
   def report
-    result = []
     result = products.map do |product|
       [product.name, product.price, product.quantity, category]
     end
