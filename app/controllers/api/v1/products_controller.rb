@@ -1,60 +1,44 @@
 class Api::V1::ProductsController < Api::V1::BaseController
+  before_action :set_category
+  before_action :set_product, except: [:download, :index, :create]
 
   def index
-    products = Product.all
-    render_with_options(
-      json: products,
-      status: :ok,
-      each_serializer: ProductSerializer
-    )
+    render json: @category.products
   end
 
   def show
-    products = Product.find(params.require(:id))
-    render_with_options(
-      json: products,
-      status: :ok,
-      each_serializer: ProductSerializer
-    )
+    render json: @product
   end
 
   def update
-    product = Product.find(params.require(:id))
-    response = product.update(product_params)
-    render_with_options(
-      json: response,
-      status: :ok,
-      each_serializer: ProductSerializer
-    )
+    @product.update(product_params)
+    render json: @product
   end
 
   def create
-    category = Category.find(params.require(:category_id))
-    response = Product.insert(product_params, category)
-    render_with_options(
-      json: response,
-      status: :ok,
-      each_serializer: ProductSerializer
-    )
+    render json: @category.products.create!(product_params)
   end
 
   def download
-    category = Category.find(params.require(:category_id))
-    filename = Product.report(category)
+    filename = @category.report
     if File.exist?(filename)
       send_file("#{filename}", filename: "#{filename}", type: CSV_CONTENT_TYPE, stream: false)
     else
-      render_with_options(
-        json: {error: "Error generating report."},
-        status: :not_found,
-      )
+      render json: {error: "Error generating report."}
     end  
   end
 
   private
 
   def product_params
-    params.permit([:name, :price, :quantity])
+    params.require(:product).permit(:name, :price, :quantity)
   end
 
+  def set_category
+    @category = Category.find(params.require(:category_id))
+  end
+
+  def set_product
+    @product = @category.products.find(params.require(:id))
+  end
 end

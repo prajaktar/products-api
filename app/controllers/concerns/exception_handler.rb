@@ -2,23 +2,15 @@ module ExceptionHandler
   extend ActiveSupport::Concern
 
   included do
-    rescue_from ActiveRecord::RecordNotFound do |e|
-      json_response({ message: e.message }, :not_found)
+    rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
+    rescue_from ActiveRecord::RecordInvalid, with: :invalid_resource
+
+  def resource_not_found
+      render json: { message: e.message }, status: :not_found
+    end
+
+    def invalid_resource
+      render json: { message: e.message }, status: :unprocessable_entity
     end
   end
-
-  def not_found
-    msg = I18n.t 'controllers.report.query.record_not_found'
-    render_with_options(
-      json: { error: msg },
-      status: :not_found
-    )
-  end
-
-  private
-
-  def json_response(object, status = :ok)
-    render json: object, status: status
-  end
-
 end
